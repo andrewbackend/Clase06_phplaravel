@@ -6,11 +6,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-use App\Http\Controllers\TaskCrotroller;
+use App\Http\Controllers\TaskController;
 
-Route::get('/', [TaskCrotroller::class, 'index']) -> name('tasks.index');
-Route::get('/create', [TaskCrotroller::class, 'create']) -> name('tasks.create');
-Route::get('/store', [TaskCrotroller::class, 'store']) -> name('tasks.store');
-Route::get('/edit/{id}', [TaskCrotroller::class, 'edit']) -> name('tasks.edit');
-Route::post('/update/{id}', [TaskCrotroller::class, 'update']) -> name('tasks.update');
-Route::post('/delete/{id}', [TaskCrotroller::class, 'destroy']) -> name('tasks.destroy');
+Route::get('/', [TaskController::class, 'index'])->name('tasks.index');
+Route::get('/create', [TaskController::class, 'create'])->name('tasks.create');
+Route::post('/store', [TaskController::class, 'store'])->name('tasks.store');
+Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
+Route::post('/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
+Route::post('/delete/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
