@@ -6,10 +6,24 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tasks = session('tasks', []);
-        return view('tasks.index', compact('tasks'));
+        $search = $request->query('search');
+
+        if($search) {
+            $tasks = array_filter($tasks, fn($t) => stripos($t['title'], $search) !== false);
+        }
+
+        //Orden: pendientes primero
+        usort($tasks, fn($a, $b) => $a['completed'] <=> $b['completed']);
+
+        //Contadores
+        $completed = collect($tasks)->where('completed', true)->count();
+        $pending = collect($tasks)->where('completed', false)->count();
+
+
+        return view('tasks.index', compact('tasks', 'search', 'completed', 'pending' ));
     }
 
     public function create()
@@ -22,7 +36,7 @@ class TaskController extends Controller
         $request->validate(['title' => 'required']);
 
         $tasks = session('tasks', []);
-        $tasks[] = ['id' => uniqid(), 'title' => $request->title];
+        $tasks[] = ['id' => uniqid(), 'title' => $request->title, 'completed' => false];
         session(['tasks' => $tasks]);
 
         return redirect()->route('tasks.index');
@@ -58,6 +72,25 @@ class TaskController extends Controller
         $tasks = array_filter($tasks, fn($task) => $task['id'] !== $id);
         session(['tasks' => array_values($tasks)]);
 
+        return redirect()->route('tasks.index');
+    }
+
+    public function toggle($id)
+    {
+        $tasks = session('tasks', []);
+        foreach ($tasks as &$task) {
+            if ($task['id'] === $id) {
+                $task['completed'] = !$task['completed']; //cambiar estado
+                break;
+            }
+        }
+        session(['tasks' => $tasks]);
+        return redirect()->rout('tasks.index');
+    }
+
+    public function clearAll()
+    {
+        session()->forget('tasks');
         return redirect()->route('tasks.index');
     }
 }

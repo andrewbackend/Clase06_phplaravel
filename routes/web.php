@@ -14,4 +14,4 @@ Route::post('/store', [TaskController::class, 'store'])->name('tasks.store');
 Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
 Route::post('/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
 Route::post('/delete/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-
+//Agregar nuevas rutas
